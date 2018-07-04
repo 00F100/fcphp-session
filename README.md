@@ -28,14 +28,25 @@ use FcPhp\Session\Facades\SessionFacade;
 
 
 // Start session and load cache
-$session = SessionFacade::getInstance('path/to/dir/cache');
+
+// Use Cache into file
+$sessionFile = SessionFacade::getInstance('path/to/dir/cache');
+
+// Use Cache into Redis
+$redis = [
+	'host' => '127.0.0.1',
+	'port' => '6379',
+	'password' => null,
+	'timeout' => 100,
+];
+$sessionRedis = SessionFacade::getInstance($redis);
 
 // Create new configuration
-$this->instance->set('item.config', 'value');
+$sessionRedis->set('item.config', 'value');
 
 // Save into Cache
-$this->instance->commit();
+$sessionRedis->commit();
 
 // Print: value
-echo $this->instance->get('item.config');
+echo $sessionRedis->get('item.config');
 ```
