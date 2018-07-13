@@ -2,9 +2,12 @@
 
 use PHPUnit\Framework\TestCase;
 use FcPhp\Session\Session;
+use FcPhp\Crypto\Crypto;
+use FcPhp\Cookie\Cookie;
 use FcPhp\Session\Interfaces\ISession;
 use FcPhp\Cache\Facades\CacheFacade;
 use FcPhp\Session\Facades\SessionFacade;
+use FcPhp\Cookie\Facades\CookieFacade;
 
 class SessionIntegrationTest extends TestCase
 {
@@ -12,9 +15,17 @@ class SessionIntegrationTest extends TestCase
 
 	public function setUp()
 	{
-		$cache = CacheFacade::getInstance('tests/var/cache');
-		$cache->set('session::' . md5('session'), [], 84000);
-		$this->instance = new Session(md5('session'), $cache);
+		$cookies = [
+			'key-cookie-2' => base64_encode(serialize([
+				'session' => [
+					'config' => 'value'
+				]
+			]))
+		];
+
+		$cookie = new Cookie('key-cookie-2', $cookies);
+
+		$this->instance = new Session($cookie);
 	}
 
 	public function testInstance()
@@ -27,11 +38,22 @@ class SessionIntegrationTest extends TestCase
 		$this->instance->set('item.config', 'value');
 		$this->instance->commit();
 		$this->assertEquals($this->instance->get('item.config'), 'value');
-		$this->instance->refresh();
 	}
 
 	public function testFacade()
 	{
-		$this->assertTrue(SessionFacade::getInstance(md5('session'), 'tests/var/cache') instanceof ISession);
+		$this->assertTrue(SessionFacade::getInstance([]) instanceof ISession);
+	}
+
+	public function testFacadeRedis()
+	{
+		$redis = [
+			'host' => 'aasd',
+			'port' => '6379',
+			'password' => null,
+			'timeout' => 100,
+		];
+		$sessionRedis = SessionFacade::getInstance($redis);
+		$this->assertTrue($sessionRedis instanceof ISession);
 	}
 }

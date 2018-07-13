@@ -26,27 +26,41 @@ or add in composer.json
 
 use FcPhp\Session\Facades\SessionFacade;
 
+/**
+ * Method to return instance of Session 
+ *
+ * @param array $cookies Cookies default
+ * @param string $nonce Nonce to use 00f100/fcphp-crypto
+ * @param string $pathKeys Path to save crypto-keys
+ * @return void
+ */
+SessionFacade::getInstance(array $cookies, string $nonce = null, string $pathKeys = null);
+
 
 // Start session and load cache
 
-// Use Cache into file
-$sessionFile = SessionFacade::getInstance('path/to/dir/cache');
+$nonce = '...';
+$pathKeys = 'var/crypto/keys';
 
-// Use Cache into Redis
-$redis = [
-	'host' => '127.0.0.1',
-	'port' => '6379',
-	'password' => null,
-	'timeout' => 100,
-];
-$sessionRedis = SessionFacade::getInstance($redis);
+// Use Cache into file
+$sessionFile = SessionFacade::getInstance($_COOKIE, $nonce, $pathKeys);
 
 // Create new configuration
 $sessionRedis->set('item.config', 'value');
 
-// Save into Cache
-$sessionRedis->commit();
-
 // Print: value
 echo $sessionRedis->get('item.config');
+
+/*
+Return: 
+Array (
+	'item' => Array(
+		'config' => 'value'
+	)
+)
+*/
+print_r($sessionRedis->get());
+
+// Save into Cookie
+$sessionRedis->commit();
 ```

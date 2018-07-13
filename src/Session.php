@@ -2,30 +2,21 @@
 
 namespace FcPhp\Session
 {
-	use FcPhp\Cache\Interfaces\ICache;
+	use FcPhp\Cookie\Interfaces\ICookie;
 	use FcPhp\Session\Interfaces\ISession;
 
 	class Session implements ISession
 	{
-		/**
-		 * @const TTL session
-		 */
-		const SESSION_TTL = 84000;
-
-		/**
-		 * @const string of session into cache
-		 */
-		const SESSION_ALIAS = 'session::';
 		
 		/**
-		 * @var string Key to save cache
+		 * @var string Key to Cookie
 		 */
-		private $key;
+		private $key = 'fcphp-session';
 		
 		/**
-		 * @var FcPhp\Cache\Interfaces\ICache
+		 * @var FcPhp\Cookie\Interfaces\ICookie
 		 */
-		private $cache;
+		private $cookie;
 		
 		/**
 		 * @var array Informations of session
@@ -35,15 +26,14 @@ namespace FcPhp\Session
 		/**
 		 * Method to construct instance of Session
 		 *
-		 * @param FcPhp\Cache\Interfaces\ICache $cache Instance of Cache
+		 * @param FcPhp\Cookie\Interfaces\ICookie $cookie Instance of Cookie
 		 * @return void
 		 */
-		public function __construct(string $key, ICache $cache)
+		public function __construct(ICookie $cookie)
 		{
-			$this->key = $key;
-			$this->cache = $cache;
-			if($this->cache->has(self::SESSION_ALIAS . $this->key)) {
-				$this->session = $this->cache->get(self::SESSION_ALIAS . $this->key);
+			$this->cookie = $cookie;
+			if($session = $this->cookie->get('session')) {
+				$this->session = $session;
 			}
 		}
 		
@@ -60,25 +50,13 @@ namespace FcPhp\Session
 		}
 		
 		/**
-		 * Method to publish into cache
+		 * Method to publish into Cookie
 		 *
 		 * @return void
 		 */
 		public function commit() :void
 		{
-			$this->cache->set(self::SESSION_ALIAS . $this->key, $this->session, self::SESSION_TTL);
-		}
-		
-		/**
-		 * Method to refresh information from Cache
-		 *
-		 * @return void
-		 */
-		public function refresh() :void
-		{
-			if($this->cache->has(self::SESSION_ALIAS . $this->key)) {
-				$this->session = $this->cache->get(self::SESSION_ALIAS . $this->key);
-			}
+			$this->cookie->set('session', $this->session);
 		}
 		
 		/**

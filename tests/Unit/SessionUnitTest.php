@@ -10,17 +10,21 @@ class SessionUnitTest extends TestCase
 
 	public function setUp()
 	{
-		$cache = $this->createMock('FcPhp\Cache\Interfaces\ICache');
-		$cache
-			->expects($this->any())
-			->method('has')
-			->will($this->returnValue(true));
-		$cache
+		// $cookies = [
+		// 	'key-cookie-2' => base64_encode(serialize([
+		// 		'session' => [
+		// 			'config' => 'value'
+		// 		]
+		// 	]))
+		// ];
+
+		$cookie = $this->createMock('FcPhp\Cookie\Interfaces\ICookie');
+		$cookie
 			->expects($this->any())
 			->method('get')
-			->will($this->returnValue([]));
+			->will($this->returnValue(['item' => ['config' => 'value']]));
 
-		$this->instance = new Session(md5('session'), $cache);
+		$this->instance = new Session($cookie);
 	}
 
 	public function testInstance()
@@ -33,6 +37,5 @@ class SessionUnitTest extends TestCase
 		$this->instance->set('item.config', 'value');
 		$this->instance->commit();
 		$this->assertEquals($this->instance->get('item.config'), 'value');
-		$this->instance->refresh();
 	}
 }

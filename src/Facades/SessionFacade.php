@@ -2,19 +2,32 @@
 
 namespace FcPhp\Session\Facades
 {
-	use FcPhp\Cache\Facades\CacheFacade;
+	use FcPhp\Cookie\Facades\CookieFacade;
 	use FcPhp\Session\Interfaces\ISession;
 	use FcPhp\Session\Session;
 
 	class SessionFacade
 	{
+		const COOKIE_ID = 'fcphp-session';
+
+		/**
+		 * @var FcPhp\Session\Interfaces\ISession Instance of Session
+		 */
 		private static $instance;
 
-		public static function getInstance(string $key, string $pathCache, string $nonce = null, string $pathKey = null)
+		/**
+		 * Method to return instance of Session 
+		 *
+		 * @param array $cookies Cookies default
+		 * @param string $nonce Nonce to crypto
+		 * @param string $pathKeys Path to save crypto-keys
+		 * @return void
+		 */
+		public static function getInstance(array $cookies, string $nonce = null, string $pathKeys = null)
 		{
 			if(!self::$instance instanceof ISession) {
-				$cache = CacheFacade::getInstance($pathCache, $nonce, $pathKey);
-				self::$instance = new Session($key, $cache);
+				$cookie = CookieFacade::getInstance(self::COOKIE_ID, $cookies, $nonce, $pathKeys);
+				self::$instance = new Session($cookie);
 			}
 			return self::$instance;
 		}
