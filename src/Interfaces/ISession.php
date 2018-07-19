@@ -2,6 +2,8 @@
 
 namespace FcPhp\Session\Interfaces
 {
+    use FcPhp\Cookie\Interfaces\ICookie;
+    
 	interface ISession
 	{
 		/**
