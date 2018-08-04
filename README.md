@@ -14,9 +14,9 @@ $ composer require 00f100/fcphp-session
 or add in composer.json
 ```json
 {
-	"require": {
-		"00f100/fcphp-session": "*"
-	}
+    "require": {
+        "00f100/fcphp-session": "*"
+    }
 }
 ```
 
@@ -54,9 +54,9 @@ echo $sessionRedis->get('item.config');
 /*
 Return: 
 Array (
-	'item' => Array(
-		'config' => 'value'
-	)
+    'item' => Array(
+        'config' => 'value'
+    )
 )
 */
 print_r($sessionRedis->get());

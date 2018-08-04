@@ -4,9 +4,9 @@ namespace FcPhp\Session\Interfaces
 {
     use FcPhp\Cookie\Interfaces\ICookie;
     
-	interface ISession
-	{
-		/**
+    interface ISession
+    {
+        /**
          * Method to construct instance of Session
          *
          * @param FcPhp\Cookie\Interfaces\ICookie $cookie Instance of Cookie
@@ -37,5 +37,5 @@ namespace FcPhp\Session\Interfaces
          * @return mixed
          */
         public function get(string $key = null);
-	}
+    }
 }
